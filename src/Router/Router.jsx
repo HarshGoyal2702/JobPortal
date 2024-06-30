@@ -1,8 +1,9 @@
 import React from 'react'
 import App from "../App"
 import Home from "../pages/Home"
-import About from "../pages/About"
 import {createBrowserRouter} from "react-router-dom"
+import CreateJob from '../pages/CreateJob'
+import MyJobs from "../pages/MyJobs"
 const router = createBrowserRouter([
     {
         path: "/",
@@ -10,7 +11,15 @@ const router = createBrowserRouter([
         children:[
             {path:"/",
                 element:<Home/>
-            }
+            },
+            {
+                path:"/post-job",
+                element:<CreateJob/>
+            },
+            {
+                path:"/my-job",
+                element:<MyJobs/>
+            },
         ]
     }
 ])
