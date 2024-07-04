@@ -1,44 +1,48 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import CreatableSelect from "react-select/creatable";
-const CreateJob = () => {
-  const [selectedOption, setSelectedOption] = useState(null);
-  const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => {
-    data.skills = selectedOption;
-    console.log("Submitting Data:", data);
+import React, { useState } from 'react'
+import { useForm } from 'react-hook-form';
+import { useLoaderData, useParams } from 'react-router-dom'
 
-    fetch("http://localhost:3000/post-job", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log("Server Response:", result);
-        if (result.insertedId) {
-          alert("Job Posted Successfully");
-          reset(); // Reset the form
-        } else {
-          alert("Failed to post job");
-        }
+const UpdateJob = () => {
+    const {id} = useParams();
+    const {_id,jobTitle,companyName,minPrice,maxPrice,salaryType,jobLocation,postingDate,experienceLevel,compamyLogo,employmentType,description,postedBy,skills}= useLoaderData();
+    const [selectedOption, setSelectedOption] = useState(null);
+    const { register, handleSubmit } = useForm();
+    const onSubmit = (data) => {
+      data.skills = selectedOption;
+      console.log("Submitting Data:", data);
+  
+      fetch(`http://localhost:3000/update-job/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-      });
-  };
-  const options = [
-    { value: "JavaScript", label: "JavaScript" },
-    { value: "java", label: "java" },
-    { value: "C++", label: "C++" },
-    { value: "C", label: "C" },
-    { value: "React", label: "React" },
-    { value: "Node", label: "Node" },
-    { value: "MongoDB", label: "MongoDB" },
-    { value: "Mongoose", label: "Mongoose" },
-    { value: "Tailwind CSS", label: "Tailwind CSS" },
-    { value: "BootStrap", label: "BootStrap" },
-  ];
+        .then((res) => res.json())
+        .then((result) => {
+          console.log("Server Response:", result);
+          if (result.insertedId) {
+            alert("Job updated Successfully");
+            reset(); // Reset the form
+          } else {
+            alert("Failed to upload job");
+          }
+        })
+        .catch((error) => {
+          console.error("Error submitting form:", error);
+        });
+    };
+    const options = [
+      { value: "JavaScript", label: "JavaScript" },
+      { value: "java", label: "java" },
+      { value: "C++", label: "C++" },
+      { value: "C", label: "C" },
+      { value: "React", label: "React" },
+      { value: "Node", label: "Node" },
+      { value: "MongoDB", label: "MongoDB" },
+      { value: "Mongoose", label: "Mongoose" },
+      { value: "Tailwind CSS", label: "Tailwind CSS" },
+      { value: "BootStrap", label: "BootStrap" },
+    ];
+
   return (
     <div className="max-w-screen-2xl container mx-auto xl:px-24 px-4">
       <div className="bg-[#fAFAFA] py-10px-4 lg:px-16">
@@ -49,7 +53,7 @@ const CreateJob = () => {
               <label className="block mb-2 text-lg">Job Title</label>
               <input
                 type="text"
-                defaultValue={"web developer"}
+                defaultValue={jobTitle}
                 {...register("jobTitle")}
                 className="create-job-input"
               />
@@ -58,8 +62,9 @@ const CreateJob = () => {
               <label className="block mb-2 text-lg">Company Name</label>
               <input
                 type="text"
+                defaultValue={companyName}
                 placeholder="Ex. Microsoft"
-                {...register("jobTitle")}
+                {...register("companyName")}
                 className="create-job-input"
               />
             </div>
@@ -72,6 +77,7 @@ const CreateJob = () => {
                 type="text"
                 required
                 placeholder="$20k"
+                defaultValue={minPrice}
                 {...register("minPrice")}
                 className="create-job-input"
               />
@@ -82,6 +88,7 @@ const CreateJob = () => {
                 type="text"
                 required
                 placeholder="$130k"
+                defaultValue={maxPrice}
                 {...register("maxPrice")}
                 className="create-job-input"
               />
@@ -95,7 +102,7 @@ const CreateJob = () => {
                 {...register("salaryType", { required: true })}
                 className="create-job-input"
               >
-                <option value="">Choose your Salary</option>
+                <option value={salaryType}>{salaryType}</option>
                 <option value="Hourly">Hourly</option>
                 <option value="Monthly">Monthly</option>
                 <option value="Yearly">Yearly</option>
@@ -106,6 +113,7 @@ const CreateJob = () => {
               <input
                 type="text"
                 required
+                defaultValue={jobLocation}
                 placeholder="Ex. New York"
                 {...register("jobLocation")}
                 className="create-job-input"
@@ -119,6 +127,7 @@ const CreateJob = () => {
               <input
                 type="date"
                 required
+                defaultValue={postingDate}
                 placeholder="2023-11-20"
                 {...register("postingDate")}
                 className="create-job-input"
@@ -130,7 +139,7 @@ const CreateJob = () => {
                 {...register("experienceLevel", { required: true })}
                 className="create-job-input"
               >
-                <option value="">Choose your Experience</option>
+                <option value={experienceLevel}>{experienceLevel}</option>
                 <option value="NoExperience">No Experience </option>
                 <option value="Internship">Internship</option>
                 <option value="work remotely">work remotely</option>
@@ -143,7 +152,7 @@ const CreateJob = () => {
             <label className="block mb-2 text-lg">Required Skill Set</label>
             <CreatableSelect
               className="create-job-input py-4"
-              defaultValue={selectedOption}
+              defaultValue={skills}
               onChange={setSelectedOption}
               options={options}
               isMulti
@@ -156,6 +165,7 @@ const CreateJob = () => {
               <input
                 type="url"
                 required
+                defaultValue={compamyLogo}
                 placeholder="Paste Your Company Logo URL : https://weShare/img1"
                 {...register("companyLogo")}
                 className="create-job-input"
@@ -167,7 +177,7 @@ const CreateJob = () => {
                 {...register("employmentType", { required: true })}
                 className="create-job-input"
               >
-                <option value="">Choose your Employment Type</option>
+                <option value={employmentType}>{employmentType}</option>
                 <option value="Full-time">Full-time</option>
                 <option value="Part-time">Part-time</option>
                 <option value="Temporary">Temporary</option>
@@ -182,9 +192,7 @@ const CreateJob = () => {
               {...register("description")}
               row={6}
               placeholder="Job Description"
-              defaultValue={
-                "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquam, dolorem. Aliquam eos commodi soluta ullam tenetur. Ullam sequi ut non a facilis. Esse amet corporis vitae, iste eligendi aut dolorum!"
-              }
+              defaultValue={description}
             />
           </div>
 
@@ -193,6 +201,7 @@ const CreateJob = () => {
             <label className="block mb-2 text-lg">Job Posted By</label>
             <input
               type="email"
+              defaultValue={postedBy}
               placeholder="your email"
               {...register("postedBy")}
               className="create-job-input"
@@ -206,7 +215,7 @@ const CreateJob = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CreateJob;
+export default UpdateJob

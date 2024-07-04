@@ -4,8 +4,9 @@ import { FiCalendar, FiClock, FiDollarSign, FiMapPin } from "react-icons/fi";
 
 const Card = ({ data }) => {
   const {
+    _id,
+  jobTitle,
     companyName,
-    jobTitle,
     companyLogo,
     minPrice,
     maxPrice,
@@ -17,7 +18,7 @@ const Card = ({ data }) => {
   } = data;
   return (
     <section className="card">
-      <Link to="/" className="flex gap-4 flex-col sm:flex-row items-start">
+      <Link to={`/job/${_id}`} className="flex gap-4 flex-col sm:flex-row items-start">
         <img src={companyLogo} alt="" />
         <div className="">
           <h4 className="text-primary mb-1 ">{companyName}</h4>

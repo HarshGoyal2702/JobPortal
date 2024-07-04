@@ -4,6 +4,10 @@ import Home from "../pages/Home"
 import {createBrowserRouter} from "react-router-dom"
 import CreateJob from '../pages/CreateJob'
 import MyJobs from "../pages/MyJobs"
+import SalaryPage from '../pages/SalaryPage'
+import UpdateJob from '../pages/UpdateJob'
+import Login from '../components/Login'
+import JobDetails from '../pages/JobDetails'
 const router = createBrowserRouter([
     {
         path: "/",
@@ -20,7 +24,24 @@ const router = createBrowserRouter([
                 path:"/my-job",
                 element:<MyJobs/>
             },
+            {
+                path:"/salary",
+                element:<SalaryPage/>
+            },
+            {
+                path:"/edit-jpb/:id",
+                element:<UpdateJob/>,
+                loader:({params})=> fetch(`http://localhost:3000/all-jobs/${params.id}`)
+            },
+            {
+                path:"/job/:id",
+                element:<JobDetails/>
+            }
         ]
+    },
+    {
+        path:"/login",
+        element:<Login/>
     }
 ])
 

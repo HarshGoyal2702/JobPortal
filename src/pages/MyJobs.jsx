@@ -8,13 +8,33 @@ const MyJobs = () => {
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [currentPage,setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
   useEffect(() => {
     setLoading(true);
     fetch("http://localhost:3000/myJobs/harshgoyal1331@gmai.com")
       .then((res) => res.json())
       .then((data) => setJobs(data));
-  }, []);
+      setLoading(false)
+  }, [searchText]);
 
+
+  const indexofLastItem = currentPage * itemsPerPage;
+  const indexofFirstItem = indexofLastItem - itemsPerPage;
+  const currentJobs = jobs.slice(indexofFirstItem, indexofLastItem);
+
+//   next button 
+const nextPage = () => {
+    if(indexofLastItem < job.length){
+        setCurrentPage(currentPage + 1);
+    }
+}
+const prevPage = ()=>{
+    if(currentPage > 1){
+        setCurrentPage(currentPage - 1);
+    }
+}
   const handleSearch = () => {
     const filter = jobs.filter(
       (job) =>
@@ -25,9 +45,25 @@ const MyJobs = () => {
     setLoading(false);
   };
 
-  const handleDelete = (id)=>{
+  const handleDelete = (id) => {
+    console.log("Deleting job with ID:", id); // Debugging line
+    fetch(`http://localhost:3000/job/${id}`, {
+      method: "DELETE",
+    })
+    .then((res) => res.json())
+    .then((result) => {
+      if (result.acknowledged === true) {
+        alert("Job Deleted Successfully!!");
+      } else {
+        alert("Not Done");
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting job:", error);
+      alert("An error occurred. Please try again.");
+    });
+  };
   
-  }
   console.log(searchText);
   return (
     <div className="max-w-screen-2iner mx-auto xl:px-24 px-4">
@@ -97,9 +133,10 @@ const MyJobs = () => {
                   </tr>
                 </thead>
 
-                <tbody>
+               {
+               loading ? (<div className="text-center flex justify-center items-center h-20">Loading...</div>):( <tbody>
                 {
-                jobs.map((job, index) => (
+                currentJobs.map((job, index) => (
                <tr key={index}>
                     <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left text-blueGray-700 ">
                       {index+1}
@@ -124,10 +161,24 @@ const MyJobs = () => {
                 )
                 }
                 
-                </tbody>
+                </tbody>)
+               }
               </table>
             </div>
           </div>
+        </div>
+
+        <div className="flex justify-center text-black space-x-8">
+            {
+                currentPage >1 && (
+                    <button onClick={prevPage} className="bg-blue-500 hover:bg-blue-700">Previous</button>
+                )
+            }
+            {
+                currentPage < jobs.length && (
+                    <button onClick={nextPage} className="bg-blue-500 hover:bg-blue-700">Next</button>
+                )
+            }
         </div>
       </section>
     </div>
